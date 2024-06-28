@@ -1,9 +1,13 @@
-console.log('Hello World!');
+const persion = {
+    name: 'L_MAFIA',
+    age: 30,
+    hobbies: ['Cooking', 'Reading']
+};
 
-function add(n1: number, n2: number) {
-    return n1 + n2;
+console.log(persion.name);
+
+for (const hobby of persion.hobbies) {
+    console.log(hobby);
 }
 
-const number1 = 5;
-const number2 = '1.3';
-console.log(add(number1, number2))
+persion.hobbies.forEach(e => console.log(e.toUpperCase()));
