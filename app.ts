@@ -1,13 +1,21 @@
+// enum
+enum Role {
+    // 0
+    ADMIN,
+    // 1
+    USER,
+}
+
 const persion: {
     name: string;
     age: number;
     hobbies: string[];
-    role: [number, string];
+    role: Role;
 } = {
     name: 'L_MAFIA',
     age: 30,
     hobbies: ['Cooking', 'Reading'],
-    role: [2, 'user']
+    role: Role.ADMIN
 };
 
 
