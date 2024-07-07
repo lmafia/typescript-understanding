@@ -1,36 +1,16 @@
-// enum
-enum Role {
-    // 0
-    ADMIN,
-    // 1
-    USER,
-
-    // 还能自定义指定 value
-    CUSTOMSIZE = 2,
-    // value 没有规定一定为数字, 而且可以 mix
-    STRING_USER = 'string_user'
+function combine(input1: number | string, input2: number | string): number | string {
+    if (typeof input1 === 'number' && typeof input2 === 'number') {
+        return input1 + input2;
+    }
+    return input1.toString() + input2.toString();
 }
 
-const persion: {
-    name: string;
-    age: number;
-    hobbies: string[];
-    role: Role;
-} = {
-    name: 'L_MAFIA',
-    age: 30,
-    hobbies: ['Cooking', 'Reading'],
-    role: Role.ADMIN
-};
+console.log('1. combine:', combine(3, 2));
 
 
-console.log(persion.role);
+console.log('2. combine:', combine('3', '2'));
 
+console.log('3. combine:', combine('3', 2));
 
+console.log('3. combine:', combine(3, '2'));
 
-for (const hobby of persion.hobbies) {
-    console.log(hobby);
-}
-
-persion.hobbies.forEach(e =>
-    console.log(e.toUpperCase()));
