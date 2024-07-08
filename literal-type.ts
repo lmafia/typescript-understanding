@@ -1,4 +1,4 @@
-function combine(
+function combineLiteral(
     input1: number | string,
     input2: number | string,
     conversion: 'as-text' | 'as-number'
@@ -10,12 +10,12 @@ function combine(
     return input1.toString() + input2.toString();
 }
 
-console.log('1. combine:', combine(3, 2, 'as-number'));
+console.log('1. combineLiteral:', combineLiteral(3, 2, 'as-number'));
 
 
-console.log('2. combine:', combine('3', '2', 'as-text'));
+console.log('2. combineLiteral:', combineLiteral('3', '2', 'as-text'));
 
-console.log('3. combine:', combine('3', 2, 'as-number'));
+console.log('3. combineLiteral:', combineLiteral('3', 2, 'as-number'));
 
-console.log('3. combine:', combine(3, '2', 'as-text'));
+console.log('3. combineLiteral:', combineLiteral(3, '2', 'as-text'));
 
