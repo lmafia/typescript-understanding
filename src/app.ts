@@ -3,6 +3,7 @@ let userName: string;
 
 userInput = 5;
 userInput = 'Max'
+const constVaraible = '123';
 
 // userName = userInput; // Error: Type 'unknown' is not assignable to type 'string'.
 
