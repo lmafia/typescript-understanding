@@ -1,38 +1,27 @@
-let userInput: unknown;
-let userName: string;
-
-userInput = 5;
-userInput = 'Max'
-const constVaraible = '123';
-
-// userName = userInput; // Error: Type 'unknown' is not assignable to type 'string'.
-
-if (typeof userInput === 'string') {
-    userName = userInput;
+function sum(x: number, y: number, z: number): number {
+    return x + y + z;
 }
 
+const numbers: [number, number, number] = [1, 2, 3];
 
+console.log(sum(...numbers)); // 等同于 sum(1, 2, 3)
 
-
-
-// 抛出异常从不会返回任何东西
-function generateError(message: string): never {
-    throw { message: message }
+const printDetails = (name: string, age: number) => {
+    console.log(`${name} is ${age} years old`);
 }
 
-generateError('An error');
+let person = { name: 'Alice', age: 30 };
 
-// 无限循环也不会返回任何东西
-function infiniteLoop(): never {
-    while (true) {
-        // do something indefinitely
-    }
+let { a, ...rest } = { a: 1, b: 2, c: 3 };
+console.log(a);
+console.log(rest);
+
+
+function sumRest(...rest: number[]): number {
+    return rest.reduce(
+        (acc, currentValue) =>
+            acc + currentValue, 0);
 }
-
-let unreachable: never;
-// unreachable = 5; // Error: Type '5' is not assignable to type 'never'.
-
-unreachable = generateError("Something went wrong"); // OK
-
-unreachable = infiniteLoop(); // OK
+console.log(`rest-array: ${sumRest(1, 2, 3)}`);
+console.log(`rest-rest: ${sumRest(...numbers)}`);
 
