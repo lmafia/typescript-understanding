@@ -1,18 +1,19 @@
-abstract class Animal {
-    abstract makeSound(): void;
+interface Shape {
+    color: string;
+    area(): number;
+}
 
-    move(): void {
-        console.log('Moving...');
+class Circle implements Shape {
+    color: string;
+
+    constructor (color: string) {
+        this.color = color;
+    }
+
+    area() {
+        return Math.PI * 2; // 假设简单地返回了圆的周长
     }
 }
 
-class Dog extends Animal {
-    // 一定需要实现方法
-    makeSound() {
-        console.log('Bark bark!');
-    }
-}
-
-let dog = new Dog();
-dog.makeSound(); // 输出: Bark bark!
-dog.move(); // 输出: Moving...
+let circle = new Circle('red');
+console.log(circle.area()); // 输出: 6.283185307179586
