@@ -1,23 +1,18 @@
-class Car {
-    //   public(默认) 、 protect、private 
-    private speed: number;
+abstract class Animal {
+    abstract makeSound(): void;
 
-    constructor (speed: number) {
-        this.speed = speed;
-    }
-
-    accelerate() {
-        this.speed += 10;
-    }
-
-    getSpeed() {
-        return this.speed;
+    move(): void {
+        console.log('Moving...');
     }
 }
 
-let car1 = new Car(60);
-car1.accelerate();
-console.log(car1.getSpeed()); // 输出: 70
+class Dog extends Animal {
+    // 一定需要实现方法
+    makeSound() {
+        console.log('Bark bark!');
+    }
+}
 
-// 编译错误，因为 speed 是私有的属性，不能在外部访问
-// console.log(car1.speed);
+let dog = new Dog();
+dog.makeSound(); // 输出: Bark bark!
+dog.move(); // 输出: Moving...
