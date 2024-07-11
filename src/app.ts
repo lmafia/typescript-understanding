@@ -1,19 +1,21 @@
-interface Shape {
-    color: string;
-    area(): number;
-}
+class Person {
+    private readonly name: string;
 
-class Circle implements Shape {
-    color: string;
-
-    constructor (color: string) {
-        this.color = color;
+    constructor (name: string) {
+        this.name = name;
     }
 
-    area() {
-        return Math.PI * 2; // 假设简单地返回了圆的周长
+    changeName(newName: string) {
+        // 错误：Cannot assign to 'name' because it is a read-only property.
+        // this.name = newName;
+    }
+    getName(): string {
+        return this.name;
     }
 }
 
-let circle = new Circle('red');
-console.log(circle.area()); // 输出: 6.283185307179586
+let person = new Person('Alice');
+console.log(person.getName()); // 输出: Alice
+
+// 错误：Cannot assign to 'name' because it is a read-only property.
+// person.name = 'Bob';
