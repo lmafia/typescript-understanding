@@ -1,11 +1,18 @@
 class Thing {
-    private _size = 0;
+    static default_size = 0;
+    // static 静态成员属性和方法都是类的
+    private _size: number = Thing.default_size;
 
     get size(): number {
         return this._size;
     }
 
-    set size(value: string | number | boolean) {
+    constructor (value?: number) {
+        this.size = value;
+    }
+
+
+    set size(value: string | number | boolean | undefined) {
         let num = Number(value);
 
         // Don't allow NaN, Infinity, etc
@@ -17,10 +24,14 @@ class Thing {
 
         this._size = num;
     }
+    static createNewThind = (size?: number): Thing => {
+        return new Thing();
+
+    }
 }
-let thing = new Thing()
+let thing = Thing.createNewThind()
 // setter  getter 不用括号, 不像是函数，像是一个属性
-thing.size = 1;
+// thing.size = 1;
 console.log(thing.size);
 
 
