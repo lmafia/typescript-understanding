@@ -1,23 +1,10 @@
-class Factory {
-    private static instance: Factory;
-    private constructor () {
-    }
-
-    static getInstance(): Factory {
-        if (Factory.instance) {
-            console.log('factory init...');
-            return Factory.instance;
-        }
-        Factory.instance = new Factory();
-        return Factory.instance;
-    }
-    produce(): string {
-        return "A good"
-    }
+interface Person {
+    name: string;
+    age?: number; // 年龄是可选的
+    gender?: string; // 性别是可选的
 }
 
-const factory = Factory.getInstance()
-const factory1 = Factory.getInstance()
-
-console.log(factory.produce());
-console.log(factory1.produce());
+// 可选属性影响匿名类和构造
+let person1: Person = { name: 'Alice' };
+let person2: Person = { name: 'Bob', age: 30 };
+let person3: Person = { name: 'Charlie', gender: 'male' };
