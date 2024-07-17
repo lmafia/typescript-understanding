@@ -1,51 +1,60 @@
 "use strict";
-class Thing {
-    get size() {
-        return this._size;
+function logLength(x) {
+    if (typeof x === 'string') {
+        console.log(x.length); // x 在这个分支被 TypeScript 编译器识别为 string 类型
     }
-    constructor(value) {
-        // static 静态成员属性和方法都是类的
-        this._size = Thing.default_size;
-        this.size = value;
-    }
-    set size(value) {
-        let num = Number(value);
-        // Don't allow NaN, Infinity, etc
-        if (!Number.isFinite(num)) {
-            this._size = 0;
-            return;
-        }
-        this._size = num;
+    else {
+        console.log(x.toFixed(2)); // x 在这个分支被 TypeScript 编译器识别为 number 类型
     }
 }
-Thing.default_size = 0;
-Thing.createNewThind = (size) => {
-    return new Thing();
-};
-let thing = Thing.createNewThind();
-// setter  getter 不用括号, 不像是函数，像是一个属性
-// thing.size = 1;
-console.log(thing.size);
-class Employee {
-    constructor() {
-        this._fullName = '';
-    }
-    // getter
-    get fullName() {
-        return this._fullName;
-    }
-    // setter
-    set fullName(newName) {
-        if (newName && newName.trim()) {
-            this._fullName = newName;
-        }
-        else {
-            throw Error('Invalid name provided.');
-        }
+logLength("hello"); // 输出: 5
+logLength(3.14159); // 输出: 3.14
+class Car {
+    drive() {
+        console.log("Driving the car");
     }
 }
-let employee = new Employee();
-employee.fullName = 'John Doe'; // 设置 fullName，调用 setter
-console.log(employee.fullName); // 获取 fullName，调用 getter，输出: John Doe
-employee.fullName = ''; // 设置一个无效的 fullName，
-console.log(employee.fullName); // 
+class Truck {
+    drive() {
+        console.log("Driving the truck");
+    }
+    loadCargo() {
+        console.log("Loading cargo");
+    }
+}
+function driveVehicle(vehicle) {
+    if (vehicle instanceof Car) {
+        vehicle.drive(); // TypeScript 确定 vehicle 是 Car 类型
+    }
+    else {
+        vehicle.drive(); // TypeScript 确定 vehicle 是 Truck 类型
+        vehicle.loadCargo(); // TypeScript 确定 vehicle 是 Truck 类型
+    }
+}
+driveVehicle(new Car()); // 输出: Driving the car
+driveVehicle(new Truck()); // 输出: Driving the truck \n Loading cargo
+// pet is Bird 和单纯的 boolean 类型不一样
+// ts 可通过它来推导类型
+function isBird(pet) {
+    return pet.fly !== undefined;
+}
+function move(pet) {
+    if (isBird(pet)) {
+        pet.fly(); // TypeScript 确定 pet 是 Bird 类型
+    }
+    else {
+        pet.swim(); // TypeScript 确定 pet 是 Fish 类型
+    }
+}
+function printPersonInfo(person) {
+    if ('age' in person) {
+        console.log(`${person.name} is ${person.age} years old.`);
+    }
+    else {
+        console.log(`${person.name}'s age is unknown.`);
+    }
+}
+let person1 = { name: 'Alice', age: 30 };
+let person2 = { name: 'Bob' };
+printPersonInfo(person1); // 输出: Alice is 30 years old.
+printPersonInfo(person2); // 输出: Bob's age is unknown.
