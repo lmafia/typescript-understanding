@@ -1,23 +1,9 @@
-interface ErrorContainer {
-    [porp: string]: string;
-}
-const errorContainer: ErrorContainer = {
-    email: 'Not a vail email!',
-    userName: 'Must start with a captial character!'
-    // etc
+function test(x: string): void;
+function test(x: number): void;
+function test(x: any): void {
+    console.log(x); // 实现函数要兼容所有函数签名
 }
 
-interface StringIndexed {
-    [key: string]: string | number;
-
-    // 可以定义一些已知的属性
-    name: string;
-    age: number;
-}
-
-const obj: StringIndexed = {
-    name: "Alice",
-    age: 30,
-    address: "",
-    city: "Wonderland"  // 允许添加额外的属性
-};
+test("Hello");  // 调用第一个重载，输出 "Hello"
+test(123);      // 调用第二个重载，输出 123
+test(true);     // 参数类型 boolean 不匹配任何重载签名，会报错
