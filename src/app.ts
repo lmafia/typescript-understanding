@@ -1,28 +1,35 @@
-// Optional Chaining
-interface Person {
-    name?: string;
-    age?: number;
-}
+const names: string[] = [''];
 
-let person: Person | null = {};
+names[0].split('');
 
-// 使用可选链操作符访问对象属性
-console.log(person?.name);  // 输出 undefined，而不是抛出错误
-
-// Nullish Coalesing
-let defaultName = "Guest";
-const emptyString = ''
-// 空字符串也认为是 false 
-console.log(emptyString || defaultName);
-// ?? 只判断 null 和 undefined 所以空串不认为是空
-console.log(emptyString ?? defaultName);
-// 只有 undefined 或 null 
-console.log(null ?? defaultName);
+// 内置的数组 interface 结合泛型
+const nameArray: Array<string> = [''];
+nameArray[0].split('');
 
 
+const promise: Promise<string> =
+    new Promise((resolve, reject) => {
+        // setTimeout 是 js 内部的定时器, 处理函数、delay、可变参数（作为处理函数的参数）
+        setTimeout((n1: number, n2: number, n3: number) => {
+            console.log(n1 + n2 + n3);
 
-// 使用空值合并运算符来选择默认值
-let displayName = person?.name ?? defaultName;
+            let data = 'Fetch Data From Server';
+            if (data) {
+                resolve(data);  // 如果成功，调用 resolve 并传递数据
+            } else {
+                reject(new Error('Failed to fetch data'));  // 如果失败，调用 reject 并传递错误信息
+            }
+        }, 1000, 1, 2, 3);
+    });
 
-console.log(displayName);  // 输出 "Guest"，因为 name 是 null
-console.log(person.name ?? defaultName);
+promise
+    .then(data => {
+        console.log(data);
+        return data.split(' ');
+    })
+    .then(data => {
+        console.log(data);
+    })
+    .catch((error) => {
+        console.error("Promise rejected:", error); // 如果发生错误则输出错误信息
+    });
