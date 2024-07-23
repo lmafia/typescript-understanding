@@ -1,9 +1,28 @@
-function test(x: string): void;
-function test(x: number): void;
-function test(x: any): void {
-    console.log(x); // 实现函数要兼容所有函数签名
+// Optional Chaining
+interface Person {
+    name?: string;
+    age?: number;
 }
 
-test("Hello");  // 调用第一个重载，输出 "Hello"
-test(123);      // 调用第二个重载，输出 123
-test(true);     // 参数类型 boolean 不匹配任何重载签名，会报错
+let person: Person | null = {};
+
+// 使用可选链操作符访问对象属性
+console.log(person?.name);  // 输出 undefined，而不是抛出错误
+
+// Nullish Coalesing
+let defaultName = "Guest";
+const emptyString = ''
+// 空字符串也认为是 false 
+console.log(emptyString || defaultName);
+// ?? 只判断 null 和 undefined 所以空串不认为是空
+console.log(emptyString ?? defaultName);
+// 只有 undefined 或 null 
+console.log(null ?? defaultName);
+
+
+
+// 使用空值合并运算符来选择默认值
+let displayName = person?.name ?? defaultName;
+
+console.log(displayName);  // 输出 "Guest"，因为 name 是 null
+console.log(person.name ?? defaultName);
