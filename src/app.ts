@@ -1,148 +1,135 @@
-// 类装饰器
-function Logger(target: Function) {
-    console.log('I AM LOGGER!');
-    console.log(`Class ${target.name} is being decorated.`);
+// validation decorator
+interface Validatable {
+  value: string | number;
+  required?: boolean;
+  minLength?: number;
+  maxLength?: number;
+  min?: number;
+  max?: number;
 }
 
-@Logger
-class Person {
-    name: string;
+function validate(validatableInput: Validatable) {
+  let isValid = true;
+  if (validatableInput.required) {
+    isValid = isValid && validatableInput.value.toString().trim().length !== 0;
+  }
+  if (
+    validatableInput.minLength != null &&
+    typeof validatableInput.value === 'string'
+  ) {
+    isValid =
+      isValid && validatableInput.value.length >= validatableInput.minLength;
+  }
+  if (
+    validatableInput.maxLength != null &&
+    typeof validatableInput.value === 'string'
+  ) {
+    isValid =
+      isValid && validatableInput.value.length <= validatableInput.maxLength;
+  }
+  if (
+    validatableInput.min != null &&
+    typeof validatableInput.value === 'number'
+  ) {
+    isValid = isValid && validatableInput.value >= validatableInput.min;
+  }
+  if (
+    validatableInput.max != null &&
+    typeof validatableInput.value === 'number'
+  ) {
+    isValid = isValid && validatableInput.value <= validatableInput.max;
+  }
+  return isValid;
+}
 
-    constructor(name: string) {
-        this.name = name;
+// autobind decorator
+function autobind(
+  target: any,
+  methodName: string,
+  descriptor: PropertyDescriptor,
+) {
+  const originalMethod = descriptor.value;
+  const adjDescriptor: PropertyDescriptor = {
+    configurable: true,
+    get() {
+      return originalMethod.bind(this);
+    },
+  };
+  return adjDescriptor;
+}
+
+class ProjectInput {
+  templateElement: HTMLTemplateElement;
+  hostElement: HTMLDivElement;
+  element: HTMLFormElement;
+  titleElement: HTMLInputElement;
+  descriptionElement: HTMLInputElement;
+  peopleElement: HTMLInputElement;
+
+  constructor() {
+    this.templateElement = document.getElementById(
+      'project-input',
+    )! as HTMLTemplateElement;
+
+    this.hostElement = document.getElementById('app')! as HTMLDivElement;
+    const importNode = document.importNode(this.templateElement.content, true);
+    this.element = importNode.firstElementChild as HTMLFormElement;
+    this.element.id = 'user-input';
+    this.titleElement = this.element.querySelector(
+      '#title',
+    )! as HTMLInputElement;
+    this.descriptionElement = this.element.querySelector(
+      '#description',
+    )! as HTMLInputElement;
+    this.peopleElement = this.element.querySelector(
+      '#people',
+    )! as HTMLInputElement;
+
+    this.configure();
+    this.attach();
+  }
+
+  private gatherUserInput(): [string, string, number] | void {
+    const enteredTitle = this.titleElement.value;
+    const enteredDescription = this.descriptionElement.value;
+    const enteredPeople = this.peopleElement.value;
+
+    if (
+      !validate({ value: enteredTitle, required: true }) ||
+      !validate({ value: enteredDescription, required: true, minLength: 5 }) ||
+      !validate({ value: +enteredPeople, required: true, min: 1 })
+    ) {
+      alert('Invalid input, please try again!');
+      return;
     }
-}
 
-const persion = new Person("Mike");
+    return [enteredTitle, enteredDescription, +enteredPeople];
+  }
 
+  private clearInputs() {
+    this.titleElement.value = '';
+    this.descriptionElement.value = '';
+    this.peopleElement.value = '';
+  }
 
-function LogMethod(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    const originalMethod = descriptor.value;
-
-    // 当方法执行会从这个方法入口执行
-    descriptor.value = function (...args: any[]) {
-        console.log(`Method ${propertyKey} is being called with args: ${args}`);
-        return originalMethod.apply(this, args);
-    };
-}
-
-class Calculator {
-    @LogMethod
-    add(a: number, b: number) {
-        return a + b;
+  @autobind
+  private submitHandler(event: Event) {
+    event.preventDefault();
+    const gatherUserInput = this.gatherUserInput();
+    if (Array.isArray(gatherUserInput)) {
+      const [title, description, people] = gatherUserInput;
+      console.log(title, description, people);
     }
+    this.clearInputs();
+  }
+
+  private configure() {
+    this.element.addEventListener('submit', this.submitHandler);
+  }
+
+  private attach() {
+    this.hostElement.insertAdjacentElement('afterbegin', this.element);
+  }
 }
 
-const calc = new Calculator();
-calc.add(1, 2); // Logs: Method add is being called with args: 1,2
-
-
-function LogAccessor(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    const originalGet = descriptor.get;
-    const originalSet = descriptor.set;
-
-    descriptor.get = function () {
-        console.log(`Getter for ${propertyKey} is being called.`);
-        return originalGet?.apply(this);
-    };
-
-
-    descriptor.set = function (value: any) {
-        console.log(`Setter for ${propertyKey} is being called with value: ${value}`);
-        originalSet?.apply(this, [value]);
-    };
-}
-
-class User {
-    private _name: string = '';
-
-    @LogAccessor
-    get name() {
-        return this._name;
-    }
-
-    // @LogMethod
-    set name(value: string) {
-        this._name = value;
-    }
-}
-
-const user = new User();
-user.name = 'Alice'; // Logs: Setter for name is being called with value: Alice
-console.log(user.name); // Logs: Getter for name is being called.
-
-
-function Readonly(target: any, propertyKey: string) {
-
-
-    const descriptor: PropertyDescriptor = {
-        writable: false,
-        configurable: false,
-        enumerable: false
-    };
-
-    Object.defineProperty(target, propertyKey, descriptor);
-}
-
-class Product {
-
-    @Readonly
-    name: string = '12313213';
-}
-
-try {
-    const product = new Product();
-    console.log(product.name);
-
-} catch (e) {
-    // 无法初始化了，证明初始的赋值前已经被改为只读了
-    console.error(e);
-}
-
-function LogParameter(target: any, propertyKey: string, parameterIndex: number) {
-    // Parameter 0 of greet in Mebmber is decorated.
-    console.log(target);
-
-    console.log(`Parameter ${parameterIndex} of ${propertyKey} in ${target.constructor.name} is decorated.`);
-}
-
-class Mebmber {
-    greet(@LogParameter message: string) {
-        console.log(message);
-    }
-}
-
-const p = new Mebmber();
-p.greet('Hello, World!');
-
-
-function Autobind(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    console.log(target);
-    console.log(`propertyKey:${propertyKey}`);
-    console.log(descriptor);
-    const originalMethod = descriptor.value;
-    const adjMethod: PropertyDescriptor = {
-        configurable: true,
-        enumerable: false,
-        get() {
-            return originalMethod.bind(this);
-        }
-    };
-    return adjMethod;
-}
-
-class Printer {
-    message = 'This works!';
-
-    @Autobind
-    showMessage() {
-        console.log(this.message);
-
-    }
-}
-
-const printer = new Printer()
-const button = document.querySelector('button')!;
-button.addEventListener('click', printer.showMessage)
-
-
+const projectInput = new ProjectInput();
