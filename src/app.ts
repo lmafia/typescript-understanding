@@ -96,6 +96,23 @@ class ProjectState {
   }
 }
 
+// Drag interface
+interface Draggable {
+  dragStartHandler(event: DragEvent): void;
+
+  dragEndHandler(event: DragEvent): void;
+}
+
+interface DragTarget {
+  dragHandler(event: DragEvent): void;
+
+  dragEnterHandler(event: DragEvent): void;
+
+  dragOverHandler(event: DragEvent): void;
+
+  dragLeaveHandler(event: DragEvent): void;
+}
+
 // Project Class
 enum Status {
   Active = 'active',
@@ -223,7 +240,10 @@ class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
 }
 
 // ProjectItem Class
-class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
+class ProjectItem
+  extends Component<HTMLUListElement, HTMLLIElement>
+  implements Draggable
+{
   private project: Project;
 
   get persons() {
@@ -236,9 +256,23 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
     super('single-project', hostId, false, project.id);
     this.project = project;
     this.renderContent();
+    this.configure();
   }
 
-  configure(): void {}
+  @autoBind
+  dragStartHandler(event: DragEvent): void {
+    console.log(event);
+  }
+
+  @autoBind
+  dragEndHandler(_: DragEvent): void {
+    console.log('Drag End');
+  }
+
+  configure(): void {
+    this.element.addEventListener('dragstart', this.dragStartHandler);
+    this.element.addEventListener('dragend', this.dragEndHandler);
+  }
 
   renderContent(): void {
     this.element.querySelector('h2')!.textContent = this.project.title;
@@ -248,7 +282,10 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
 }
 
 // ProjectList Class
-class ProjectList extends Component<HTMLDivElement, HTMLElement> {
+class ProjectList
+  extends Component<HTMLDivElement, HTMLElement>
+  implements DragTarget
+{
   assignedProjects: Project[];
 
   // This means that the type property can only be accessed within the class and cannot be modified from outside the class.
@@ -259,6 +296,26 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
     this.renderContent();
   }
 
+  @autoBind
+  dragHandler(event: DragEvent): void {
+    console.log(event);
+  }
+
+  @autoBind
+  dragEnterHandler(event: DragEvent): void {
+    console.log(event);
+  }
+  @autoBind
+  dragOverHandler(event: DragEvent): void {
+    this.element.querySelector('ul')!.classList.add('droppable');
+    console.log(event);
+  }
+  @autoBind
+  dragLeaveHandler(event: DragEvent): void {
+    console.log(event);
+    this.element.querySelector('ul')!.classList.remove('droppable');
+  }
+
   configure() {
     ProjectState.getInstance().addListener((projects: Project[]) => {
       this.assignedProjects = projects.filter((prj) => {
@@ -266,6 +323,9 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
       });
       this.renderProjects();
     });
+    this.element.addEventListener('drag', this.dragHandler);
+    this.element.addEventListener('dragover', this.dragOverHandler);
+    this.element.addEventListener('dragleave', this.dragLeaveHandler);
   }
 
   private renderProjects() {
